@@ -337,8 +337,6 @@ func TestChatCompletionAcceptsValidTypedContentBlocks(t *testing.T) {
 // TestAnthropicMessagesRejectsInvalidInputBeforeDispatch mirrors the
 // ChatCompletion case for the /v1/messages ingress.
 func TestAnthropicMessagesRejectsInvalidInputBeforeDispatch(t *testing.T) {
-	h := &Handler{}
-
 	cases := []struct {
 		name string
 		body string
