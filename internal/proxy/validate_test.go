@@ -349,9 +349,12 @@ func TestAnthropicMessagesRejectsInvalidInputBeforeDispatch(t *testing.T) {
 		{"content is a bare number", `{"model":"some-model","max_tokens":100,"messages":[{"role":"user","content":123}]}`},
 		{"content array holds a null block", `{"model":"some-model","max_tokens":100,"messages":[{"role":"user","content":[null]}]}`},
 		{"content array holds an object with no type", `{"model":"some-model","max_tokens":100,"messages":[{"role":"user","content":[{}]}]}`},
+		{"text block with a null text field", `{"model":"haiku","max_tokens":100,"messages":[{"role":"user","content":[{"type":"text","text":null}]}]}`},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
+			calls := 0
+			h := handlerWithCallCounter(&calls)
 			req := httptest.NewRequest(http.MethodPost, "/v1/messages", strings.NewReader(tc.body))
 			rec := httptest.NewRecorder()
 
@@ -371,6 +374,9 @@ func TestAnthropicMessagesRejectsInvalidInputBeforeDispatch(t *testing.T) {
 			}
 			if resp.Error.Type != "invalid_request_error" {
 				t.Fatalf("error.type = %q, want invalid_request_error", resp.Error.Type)
+			}
+			if calls != 0 {
+				t.Fatalf("provider was called %d times, want 0", calls)
 			}
 		})
 	}

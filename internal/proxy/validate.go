@@ -109,8 +109,8 @@ func validateContent(field string, content json.RawMessage) error {
 			// no-op in Go (the same gotcha as content itself), so a literal
 			// null text field must be rejected explicitly before the
 			// unmarshal attempt below would silently accept it.
-			var text string
-			if len(block.Text) == 0 || string(block.Text) == "null" || json.Unmarshal(block.Text, &text) != nil {
+			var text *string
+			if len(block.Text) == 0 || json.Unmarshal(block.Text, &text) != nil || text == nil {
 				return fmt.Errorf("%s[%d] is a text block and requires a string-valued text field, got %s", field, j, part)
 			}
 		}
